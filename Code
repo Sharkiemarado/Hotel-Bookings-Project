@@ -1,0 +1,65 @@
+--Import Data
+
+hotel_bookings <- read.csv("hotel_bookings.csv")
+
+-- Preview Sample of Data
+
+head(hotel_bookings)
+
+--Look at column names as a preview
+
+colnames(hotel_bookings)
+
+-- Install and load ggplot2
+
+install.packages('ggplot2')
+library(ggplot2)
+
+--A stakeholder tells you, "I want to target people who book early, and I think that people with children are most likely to book in advance.
+ggplot(data = hotel_bookings) +
+  geom_point(mapping = aes(x = lead_time, y = children))
+
+-- On the x-axis, the plot shows how far in advance a booking is made, with the bookings furthest to the right happening the most in advance. On the y-axis it shows how many children there are in a party. The plot reveals that your stakeholder's hypothesis is incorrect.
+
+--Next, your stakeholder says that she wants to increase weekend bookings, an important source of revenue for the hotel. Your stakeholder wants to know what group of guests book the most weekend nights in order to target that group in a new marketing campaign. She suggests that guests without children book the most weekend nights. Is this true? Yes, it is true (see below)
+ggplot(data = hotel_bookings) +
+   geom_point(mapping = aes(x = stays_in_weekend_nights, y = children))
+
+-- what distribution type has the most number of bookings? (Now look at Bar charts)
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = distribution_channel))
+(answer TA/TO)
+
+--Use the `filter()` function to create a data set that only includes the data you want: 
+--{r filtering a dataset to just city hotels that are online TA} 
+--(First install Dpylr)
+install.packages('dpylr')
+library ('dpylr')
+
+city_onlineta_hotels <- hotel_bookings %>%
+  filter(hotel == "City Hotel", market_segment == "Online TA")
+
+
+--Use the`View`() function to check out the new data frame:
+
+ View (city_onlineta_hotels)
+
+--Filter for High value bookings
+high_value_bookings <- hotel_bookings %>%
+  filter(adr > 200)
+--Then view the new table
+
+View(high_value_bookings)
+
+
+--Get the month with the most high-value bookings, assuming high value means over $200 (ADR > 200)
+
+top_high_value_month <- hotel_bookings %>%
+  filter(adr > 200) %>%
+  group_by(arrival_date_month) %>%
+  summarise(high_value_count = n()) %>%
+  arrange(desc(high_value_count)) %>%
+  slice(1)  
+-- This gives you the top month only
+
+View (top_high_value_month)
